@@ -1,0 +1,48 @@
+openapi: 3.0.0
+info:
+  title: Circular Reference Example
+  version: 1.0.0
+
+components:
+  schemas:
+    TreeNode:
+      type: object
+      properties:
+        id:
+          type: string
+        value:
+          $ref: '#/components/schemas/TreeNodeValue'  # Circular reference through another object
+        parentNode:
+          $ref: '#/components/schemas/TreeNode'  # Circular reference in object
+        childNodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TreeNode'  # Circular reference in array
+      required:
+        - name
+    TreeNodeValue:
+      type: object
+      properties:
+        val:
+          type: string
+        ofNode:
+          $ref: '#/components/schemas/TreeNode' # Circular reference through another object
+
+
+paths:
+  /tree/{id}:
+    get:
+      summary: Get a TreeNode
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: TreeNode found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TreeNode'
